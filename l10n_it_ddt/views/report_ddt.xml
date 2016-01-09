@@ -93,8 +93,21 @@
                                     <div t-if="o.partner_invoice_id">VAT number: <span t-field="o.partner_invoice_id.vat"/></div>
                                 </div>
                             </div>
+
                             <h1>DDT number: <span t-field="o.ddt_number"></span></h1>
-                            <table class="table table-condensed">
+
+                            <div class="row mt32 mb32">
+                                <div class="col-xs-5" t-if="o.date">
+                                    <strong>Data documento:</strong>
+                                    <p t-field="o.date" t-field-options='{"format": "d MMMM y"}'/>
+                                </div>
+                                <div class="col-xs-5" t-if="o.date_done">
+                                    <strong>Data spedizione:</strong>
+                                    <p t-field="o.date_done" t-field-options='{"format": "d MMMM y"}'/>
+                                </div>
+                            </div>
+
+                            <table class="table table-condensed" t-if="o.line_ids">
                                 <thead>
                                     <tr>
                                         <th><strong>Description</strong></th>
