@@ -22,7 +22,9 @@
             <field name="model">payment.mode</field>
             <field name="inherit_id" ref="account_payment.view_payment_mode_form"/>
             <field name="arch" type="xml">
-                <field name="riba"/>
+                <field name="name" position="after">
+                    <field name="riba"/>
+                </field>
             </field>
         </record>
 
