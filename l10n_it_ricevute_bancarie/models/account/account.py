@@ -35,12 +35,21 @@ class AccountPaymentTerm(orm.Model):
     _inherit = 'account.payment.term'
 
     _columns = {
-        'riba': fields.boolean('Riba'),
+        # 'riba': fields.boolean('Riba'),
         'riba_payment_cost': fields.float(
             'RiBa Payment Cost', digits_compute=dp.get_precision('Account'),
             help="Collection fees amount. If different from 0, "
                  "for each payment deadline an invoice line will be added "
                  "to invoice, with this amount"),
+    }
+
+
+class PaymentMode(orm.Model):
+    # flag riba utile a distinguere la modalità di pagamento
+    _inherit = 'payment.mode'
+
+    _columns = {
+        'riba': fields.boolean('Riba', help='Specify if this payment mode is a RiBa.'),
     }
 
 
@@ -67,8 +76,14 @@ class AccountMoveLine(orm.Model):
     _columns = {
         'distinta_line_ids': fields.one2many(
             'riba.distinta.move.line', 'move_line_id', "Dettaglio riba"),
-        'riba': fields.related(
-            'invoice', 'payment_term', 'riba', type='boolean', string='RiBa',
+        # 'riba_term': fields.related(
+        #    'invoice', 'payment_term', 'riba', type='boolean', string='Payment Term RiBa',
+        #    store=False),
+        'riba_mode': fields.related(
+            'invoice', 'payment_mode_id', 'riba', type='boolean', string='RiBa Payment Mode',
+            store=False),
+        'payment_mode_id': fields.related(
+            'invoice', 'payment_mode_id', 'name', type='char', string='Payment Mode',
             store=False),
         'unsolved_invoice_ids': fields.many2many(
             'account.invoice', 'invoice_unsolved_line_rel', 'line_id',
@@ -165,7 +180,7 @@ class AccountInvoice(orm.Model):
             # ---- Add a line with payment cost for each due only for fist due
             # ---- of the month
             if invoice.type != 'out_invoice' or not invoice.payment_term \
-                    or not invoice.payment_term.riba \
+                    or not invoice.payment_mode_id.riba \
                     or invoice.payment_term.riba_payment_cost == 0.0:
                 continue
             if not invoice.company_id.due_cost_service_id:
