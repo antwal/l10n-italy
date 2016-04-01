@@ -25,6 +25,38 @@
         </record>
 
         <!-- ====================================================== -->
+        <!--                     DISTINTA RIBA LINE - FILTRI        -->
+        <!-- ====================================================== -->
+        <record id="view_distinta_riba_line_filtri" model="ir.ui.view">
+            <field name="name">riba.distinta.line.filtri</field>
+            <field name="model">riba.distinta.line</field>
+            <field name="arch" type="xml">
+            <search string="Linee Distinte Ri.Ba.">
+                <field name="partner_id"/>
+                <field name="invoice_number"/>
+                <field name="invoice_date"/>
+                <field name="amount"/>
+                <field name="due_date"/>
+
+                <filter string="Bozza" domain="[('state','=','draft')]" name="riba_line_payed"/>
+                <filter string="Accettata" domain="[('state','=','confirmed')]" name="riba_line_confirmed"/>
+                <filter string="Accreditata" domain="[('state','=','accredited')]" name="riba_line_accredited"/>
+                <filter string="Pagata" domain="[('state','=','paid')]" name="riba_line_paid"/>
+                <filter string="Insoluto" domain="[('state','=','unsolved')]" name="riba_line_unsolved"/>
+                <filter string="Annullata" domain="[('state','=','cancel')]" name="riba_line_cancel"/>
+                <separator/>
+
+                <group expand="0" string="Group By...">
+                    <filter string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                    <filter string="Distinta" domain="[]" context="{'group_by':'distinta_id'}"/>
+                    <filter string="Scadenza" domain="[]" context="{'group_by':'due_date'}"/>
+                    <filter string="Stato" domain="[]" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+            </field>
+        </record>
+
+        <!-- ====================================================== -->
         <!--                     DISTINTA RIBA TREE                     -->
         <!-- ====================================================== -->
         <record model="ir.ui.view" id="view_distinta_riba_tree">
@@ -37,6 +69,33 @@
                     <field name="date_accepted" />
                     <field name="date_paid" />
                     <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- ====================================================== -->
+        <!--                     DISTINTA RIBA LINE TREE            -->
+        <!-- ====================================================== -->
+        <record model="ir.ui.view" id="view_distinta_riba_line_tree">
+            <field name="name">riba.distinta.line.tree</field>
+            <field name="model">riba.distinta.line</field>
+            <field name="arch" type="xml">
+                <tree string="Issue Ri.Ba.">
+                    <field name="distinta_id"/>
+                    <field name="sequence"/>
+                    <field name="invoice_number"/>
+                    <field name="invoice_date"/>
+                    <field name="partner_id"/>
+                    <!--<field name="iban"/>-->
+                    <field name="amount" sum="Amount"/>
+                    <field name="due_date"/>
+                    <field name="state"/>
+                    <button name="972"
+                            string="Unsolved"
+                            icon="terp-dolar_ok!"
+                            type="action"
+                            attrs="{'invisible':['|',('type','=','incasso'),('state','!=','accredited')]}" />
+                    <field name="type" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -185,7 +244,26 @@
         <!--                     DISTINTA RIBA - MENU                -->
         <!-- ====================================================== -->
         <menuitem name="Distinte" parent="menu_riba" 
-            id="menu_riba_distinte" action="distinta_riba_action" />
+            id="menu_riba_distinte" action="distinta_riba_action"  sequence="0"/>
+
+        <!-- ====================================================== -->
+        <!--                     ACTION DISTINTA RIBA LINE          -->
+        <!-- ====================================================== -->
+        <record id="distinta_riba_line_action" model="ir.actions.act_window">
+            <field name="name">Righe Distinte</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">riba.distinta.line</field>
+            <field name="src_model">riba.distinta.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_distinta_riba_line_filtri"/>
+        </record>
+
+        <!-- ====================================================== -->
+        <!--                     DISTINTA RIBA LINE - MENU          -->
+        <!-- ====================================================== -->
+        <menuitem name="Righe Distinte" parent="menu_riba"
+            id="menu_riba_distinte_line" action="distinta_riba_line_action"  sequence="10" />
 
     </data>
 </openerp>
