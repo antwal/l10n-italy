@@ -106,7 +106,7 @@ class RibaIssue(models.TransientModel):
                         for grouped_line in grouped_lines[key]:
                             riba_list_move_line.create({
                                 'riba_line_id': rdl_id,
-                                'amount': grouped_line.amount_residual,
+                                'amount': grouped_line.maturity_residual,
                                 'move_line_id': grouped_line.id,
                             })
                         del grouped_lines[key]
@@ -118,7 +118,7 @@ class RibaIssue(models.TransientModel):
                     self.configuration_id.acceptance_account_id.id).id
                 riba_list_move_line.create({
                     'riba_line_id': rdl_id,
-                    'amount': move_line.amount_residual,
+                    'amount': move_line.maturity_residual,
                     'move_line_id': move_line.id,
                 })
 
