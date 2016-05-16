@@ -1,0 +1,102 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* l10n_it_fattura_accompagnatoria
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-28 14:47+0000\n"
+"PO-Revision-Date: 2016-04-28 14:47+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Carriage Condition"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Carrier"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Carrier's Signature"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Cessionario"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Destinatario"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Driver's Signature"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Goods Description"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: model:ir.model,name:l10n_it_fattura_accompagnatoria.model_account_invoice
+msgid "Invoice"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Parcels"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Pick up time"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Recipient's Signature"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: model:ir.model,name:l10n_it_fattura_accompagnatoria.model_sale_order
+msgid "Sales Order"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: field:account.invoice,ddt_into_invoice:0
+#: code:addons/l10n_it_fattura_accompagnatoria/models/account_invoice.py:10
+#: code:addons/l10n_it_fattura_accompagnatoria/models/sale_order.py:10
+#: field:sale.order,ddt_into_invoice:0
+#, python-format
+msgid "Show Transport information on Invoice"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "Transportation Reason"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:website:account.report_invoice_document
+msgid "VAT number:"
+msgstr ""
+
+#. module: l10n_it_fattura_accompagnatoria
+#: view:account.invoice:l10n_it_fattura_accompagnatoria.invoice_form_view_fattura_accompagnatoria
+#: view:sale.order:l10n_it_fattura_accompagnatoria.sale_order_form_view_fattura_accompagnatoria
+msgid "[('ddt_into_invoice', '=', True)]"
+msgstr ""
+

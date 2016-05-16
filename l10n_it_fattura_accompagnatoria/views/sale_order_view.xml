@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="sale_order_form_view_fattura_accompagnatoria" model="ir.ui.view">
+            <field name="name">sale.order.form.fattura.accompagnatoria</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="l10n_it_ddt.sale_order_form_view_ddt"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='create_ddt']" position="after">
+                    <field name="ddt_into_invoice" />
+                </xpath>
+
+                <xpath expr="//field[@name='goods_description_id']" position="replace">
+                    <field name="goods_description_id" attrs="{'required':['|',('ddt_into_invoice', '=', True), ('create_ddt', '=', True)]}" />
+                </xpath>
+
+                <xpath expr="//field[@name='carriage_condition_id']" position="replace">
+                    <field name="carriage_condition_id" attrs="{'required':['|',('ddt_into_invoice', '=', True), ('create_ddt', '=', True)]}" />
+                </xpath>
+
+                <xpath expr="//field[@name='transportation_reason_id']" position="replace">
+                    <field name="transportation_reason_id" attrs="{'required':['|',('ddt_into_invoice', '=', True), ('create_ddt', '=', True)]}" />
+                </xpath>
+
+                <xpath expr="//field[@name='transportation_method_id']" position="replace">
+                    <field name="transportation_method_id" attrs="{'required':['|',('ddt_into_invoice', '=', True), ('create_ddt', '=', True)]}" />
+                </xpath>
+
+                <xpath expr="//field[@name='parcels']" position="replace">
+                    <field name="parcels" attrs="{'required':['|',('ddt_into_invoice', '=', True), ('create_ddt', '=', True)]}" />
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>
