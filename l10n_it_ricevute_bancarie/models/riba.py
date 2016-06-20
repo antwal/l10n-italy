@@ -27,6 +27,10 @@
 from openerp import fields, models, api, workflow
 from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
+from decimal import *
+import logging
+
+_log = logging.getLogger(__name__)
 
 
 class RibaList(models.Model):
@@ -296,14 +300,16 @@ class RibaListLine(models.Model):
     partner_id = fields.Many2one(
         'res.partner', string="Cliente", readonly=True)
     due_date = fields.Date("Due date", readonly=True)
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('confirmed', 'Confirmed'),
-        ('accredited', 'Accredited'),
-        ('paid', 'Paid'),
-        ('unsolved', 'Unsolved'),
-        ('cancel', 'Canceled'),
-    ], 'State', select=True, readonly=True, track_visibility='onchange')
+    state = fields.Selection(
+        [
+            ('draft', 'Draft'),
+            ('confirmed', 'Confirmed'),
+            ('accredited', 'Accredited'),
+            ('paid', 'Paid'),
+            ('unsolved', 'Unsolved'),
+            ('cancel', 'Canceled'),
+        ],
+        'State', select=True, readonly=True, track_visibility='onchange')
     payment_ids = fields.Many2many(
         'account.move.line', compute='_compute_lines', string='Payments')
     type = fields.Char(
@@ -316,55 +322,71 @@ class RibaListLine(models.Model):
         for line in self:
             journal = line.distinta_id.config_id.acceptance_journal_id
             total_credit = 0.0
-            move_id = move_pool.create(self._cr, self.env.user.id, {
-                'ref': 'Ri.Ba. %s - line %s' % (line.distinta_id.name,
-                                                line.sequence),
-                'journal_id': journal.id,
-                'date': line.distinta_id.registration_date,
-            }, self._context)
+            move_id = move_pool.create(
+                self._cr,
+                self.env.user.id,
+                {
+                    'ref': 'Ri.Ba. %s - line %s' % (line.distinta_id.name,
+                                                    line.sequence),
+                    'journal_id': journal.id,
+                    'date': line.distinta_id.registration_date,
+                },
+                self._context
+            )
+
             to_be_reconciled = []
             for riba_move_line in line.move_line_ids:
                 total_credit += riba_move_line.amount
                 move_line_id = move_line_pool.create(
-                    self._cr, self.env.user.id, {
+                    self._cr,
+                    self.env.user.id,
+                    {
                         'name': (
                             riba_move_line.move_line_id.invoice and
                             riba_move_line.move_line_id.invoice.number or
                             riba_move_line.move_line_id.name),
                         'partner_id': line.partner_id.id,
-                        'account_id': (
-                            riba_move_line.move_line_id.account_id.id),
-                        'credit': riba_move_line.amount,
-                        'debit': 0.0,
+                        'account_id': riba_move_line.move_line_id.account_id.id,
+                        # str casting in necessary to avoid ceiling
+                        'credit': Decimal(
+                            str(riba_move_line.move_line_id.debit)).quantize(Decimal('.02'), rounding=ROUND_HALF_UP),
+
+                        # str casting in necessary to avoid ceiling
+                        'debit': Decimal(
+                            str(riba_move_line.move_line_id.credit)).quantize(Decimal('.02'), rounding=ROUND_HALF_UP),
                         'move_id': move_id,
-                    }, self._context)
-                to_be_reconciled.append([move_line_id,
-                                         riba_move_line.move_line_id.id])
-            move_line_pool.create(self._cr, self.env.user.id, {
-                'name': 'Ri.Ba. %s - line %s' % (line.distinta_id.name,
-                                                 line.sequence),
-                'account_id': (
-                    line.acceptance_account_id.id or
-                    line.distinta_id.config_id.acceptance_account_id.id
-                    # in questo modo se la riga non ha conto accettazione
-                    # viene prelevato il conto in configuration riba
-                ),
-                'partner_id': line.partner_id.id,
-                'date_maturity': line.due_date,
-                'credit': 0.0,
-                'debit': total_credit,
-                'move_id': move_id,
-            }, self._context)
-            move_pool.post(
-                self._cr, self.env.user.id, [move_id], self._context)
+                    },
+                    self._context
+                )
+
+                to_be_reconciled.append([move_line_id, riba_move_line.move_line_id.id])
+
+            move_line_pool.create(
+                self._cr,
+                self.env.user.id,
+                {
+                    'name': 'Ri.Ba. %s - line %s' % (line.distinta_id.name, line.sequence),
+                    'account_id': (
+                        line.acceptance_account_id.id or
+                        line.distinta_id.config_id.acceptance_account_id.id
+                        # in questo modo se la riga non ha conto accettazione
+                        # viene prelevato il conto in configuration riba
+                    ),
+                    'partner_id': line.partner_id.id,
+                    'date_maturity': line.due_date,
+                    'credit': 0.0,
+                    'debit': total_credit,
+                    'move_id': move_id,
+                },
+                self._context
+            )
+
+            move_pool.post(self._cr, self.env.user.id, [move_id], self._context)
+
             for reconcile_ids in to_be_reconciled:
-                move_line_pool.reconcile_partial(self._cr, self.env.user.id,
-                                                 reconcile_ids,
-                                                 self._context)
-            line.write({
-                'acceptance_move_id': move_id,
-                'state': 'confirmed',
-            })
+                move_line_pool.reconcile_partial(self._cr, self.env.user.id, reconcile_ids, self._context)
+
+            line.write({'acceptance_move_id': move_id, 'state': 'confirmed', })
             line.distinta_id.signal_workflow('accepted')
 
 
